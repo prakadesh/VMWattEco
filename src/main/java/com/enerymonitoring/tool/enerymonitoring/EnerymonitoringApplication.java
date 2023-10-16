@@ -39,6 +39,10 @@ public class EnerymonitoringApplication {
 
 	private static final int HOST2_PES= 4;
 
+	private final long HOST_RAM = 2048; //in Megabytes
+	private final long HOST_BW = 10000; //bandwidth in Megabits/s
+	private final long HOST_Storage = 1000000; //in Megabytes
+
 	/**   time (in seconds) the Host takes to start up. */
 	private static final double HOST_START_UP_DELAY = 5;
 
@@ -299,12 +303,10 @@ public class EnerymonitoringApplication {
 			peList.add(new PeSimple(1000));
 		}
 
-		final long ram = 2048; //in Megabytes
-		final long bw = 10000; //bandwidth in Megabits/s
-		final long storage = 1000000; //in Megabytes
+
 		final var vmScheduler = new VmSchedulerTimeShared();
 
-		final var host = new HostSimple(ram, bw, storage, peList);
+		final var host = new HostSimple(HOST_RAM, HOST_BW, HOST_Storage, peList);
 		host.setStartupDelay(HOST_START_UP_DELAY)
 				.setShutDownDelay(HOST_SHUT_DOWN_DELAY);
 

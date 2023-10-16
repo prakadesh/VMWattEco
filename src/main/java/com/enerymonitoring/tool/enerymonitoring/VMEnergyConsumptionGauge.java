@@ -16,6 +16,7 @@ public class VMEnergyConsumptionGauge {
         gauge.setSkin(new ModernSkin(gauge));
         gauge.setMinValue(0);
         gauge.setMaxValue(100);
+        gauge.setMajorTickSpace(100); // Set the interval to 100
         gauge.setUnit("Joules");
         gauge.setTitle("Energy Consumption of VM");
         gauge.setForegroundBaseColor(Color.WHITE);

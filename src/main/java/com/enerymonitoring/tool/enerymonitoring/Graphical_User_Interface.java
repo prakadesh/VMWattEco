@@ -2,6 +2,8 @@
         package com.enerymonitoring.tool.enerymonitoring;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,7 +13,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Graphical_User_Interface extends Application {
+import java.lang.module.Configuration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+        public class Graphical_User_Interface extends Application {
     private EnerymonitoringApplication energyMonitoringApp;
 
     private HostEnergyConsumptionGauge energyGauge;
@@ -30,11 +37,14 @@ public class Graphical_User_Interface extends Application {
     private Slider vmBwSlider;
     private Slider vmStorageSlider;
     private Slider cloudletLengthSlider;
+            private final int hostDefaultRAM = 2048;
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+                public static void main(String[] args) {
+                    launch(args);
+                }
+
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -44,6 +54,41 @@ public class Graphical_User_Interface extends Application {
 
         StackPane Host_root = new StackPane(energyGauge.getGauge());
         StackPane vm_root = new StackPane(vmenergyGauge.getGauge());
+
+        // Create a configuration manager
+        ConfigurationManager configManager = new ConfigurationManager();
+
+        // Add multiple configurations to the manager
+        configManager.addConfiguration("Default", 4, 2, 4, 8, 8, 2);
+        configManager.addConfiguration("Custom 1", 8, 3, 5, 10, 12, 3);
+        configManager.addConfiguration("Configuration 1", 5, 4, 10, 2, 20, 1);
+        configManager.addConfiguration("Configuration 2", 3, 6, 9, 3, 15, 2);
+        configManager.addConfiguration("Configuration 3", 2, 8, 8, 4, 12, 4);
+        configManager.addConfiguration("Configuration 4", 4, 2, 6, 2, 10, 2);
+        configManager.addConfiguration("Configuration 5", 3, 6, 12, 2, 15, 1);
+        configManager.addConfiguration("Configuration 6", 6, 3, 9, 3, 18, 2);
+        configManager.addConfiguration("Configuration 7", 4, 4, 8, 2, 12, 2);
+        configManager.addConfiguration("Configuration 8", 5, 5, 10, 2, 15, 2);
+        configManager.addConfiguration("Configuration 9", 3, 6, 6, 2, 12, 2);
+        configManager.addConfiguration("Configuration 10", 5, 3, 10, 2, 15, 2);
+
+        // Create a ComboBox to select configurations
+        ObservableList<String> configNames = FXCollections.observableArrayList(configManager.getConfigurationNames());
+
+        ComboBox<String> configComboBox = new ComboBox<>(configNames);
+        configComboBox.setValue("Default");
+
+        configComboBox.setOnAction(e -> {
+            Configuration selectedConfig = configManager.getConfiguration(configComboBox.getValue());
+            vmCoresSlider.setValue(selectedConfig.vmCores);
+            host_no_slider.setValue(selectedConfig.noOfHosts);
+            host_cores.setValue(selectedConfig.hostCores);
+            vm_no_slider.setValue(selectedConfig.noOfVMs);
+            cloudlet_no_slider.setValue(selectedConfig.noOfCloudlets);
+            cloudlet_core.setValue(selectedConfig.cloudletCores);
+        });
+        VBox configComboBoxBox = new VBox(10);
+        configComboBoxBox.getChildren().addAll(new Label("Select Configuration"), configComboBox);
 
         HBox hbox_gauge = new HBox(10); // 10 pixels spacing
         Label aboutUsLabel = new Label("Welcome to the VMWattEco!\n\n" +
@@ -216,6 +261,7 @@ public class Graphical_User_Interface extends Application {
         errorLabel.setStyle("-fx-text-fill: red;"); // Set the error text color to red
 
         vbox.getChildren().addAll(
+                configComboBoxBox,
                 hostnoValueLabel, host_no_slider, hostcoreValueLabel, host_cores,
                 vmnoValueLabel, vm_no_slider, vmCoresValueLabel, vmCoresSlider,
                 cloudletnoValueLabel, cloudlet_no_slider, cloudletcoreValueLabel, cloudlet_core, vmRamValueLabel,
@@ -230,6 +276,11 @@ public class Graphical_User_Interface extends Application {
         );
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(vbox);
+        scrollPane.pannableProperty().set(true);
+        scrollPane.setFitToWidth(true);  // This line will make the scroll pane take the full width
+        // Get the vertical scrollbar of the scroll pane
+        ScrollBar verticalScrollBar = (ScrollBar) scrollPane.lookup(".vertical .scroll-bar");
+
 
 
 
@@ -274,79 +325,95 @@ public class Graphical_User_Interface extends Application {
             int vmstor = (int) vmStorageSlider.getValue();
             int cloudletlen = (int) cloudletLengthSlider.getValue();
 
+            // Calculate total available host resources (you need to define these)
+            int totalHostCores = ionohosts * host_cpu;
+            int totalRAM = hostDefaultRAM;
+
+            int totalHostRAM = ionohosts * totalRAM; // Total available RAM in all hosts'
+
+            if (vmcpuCoresValue > host_cpu || vmram > (totalHostRAM / vmNoIO)) {
+                errorLabel.setText("Host resources cannot handle the VM requirements.");
+            } else if (cloudlets_core > host_cpu) {
+                errorLabel.setText("Host resources cannot handle the cloudlet requirements.");
+            } else if (totalHostCores < vmcpuCoresValue * vmNoIO) {
+                errorLabel.setText("Not enough host resources for VMs.");
+            } else if (totalHostCores < cloudlets_core * cloudlets) {
+                errorLabel.setText("Not enough host resources for cloudlets.");
+            }else {
+                try {
+                    scrollPane.setVvalue(1.0);
+
+                    // Initialize variables with default values
+                    int vmPesValue = 4;
+                    int noofhost = 2;
+                    int vmno = 4;
+                    int cloudletno = 8;
+                    int hostcores = 8;
+                    int cloudletCore = 2;
+                    int ramDefault = 512;
+                    int bwDefault =  1000;
+                    int storageDefault = 10000;
+                    int cloudletLength = 50000;
+                    // Parse the user input as an integer if provided
+                    if (vmcpuCoresValue != 0) {
+                        vmPesValue = vmcpuCoresValue;
+                    }
+                    if (ionohosts != 0) {
+                        noofhost = ionohosts;
+                    }
+                    if (vmNoIO != 0) {
+                        vmno = vmNoIO;
+                    }
+                    if (cloudlets != 0) {
+                        cloudletno = cloudlets;
+                    }
+                    if (host_cpu != 0) {
+                        hostcores = host_cpu;
+                    }
+                    if (cloudlets_core != 0) {
+                        cloudletCore = cloudlets_core;
+                    }
+                    if (vmram != 0) {
+                        ramDefault = vmram;
+                    }
+                    if (vmbw != 0){
+                        bwDefault = vmbw;
+                    }
+                    if (vmstor != 0){
+                        storageDefault=vmstor;
+                    }
+                    if (cloudletlen != 0){
+                        cloudletLength=cloudletlen;
+                    }
+                    // Parse the user input as an integer
 
 
-            try {
-                // Initialize variables with default values
-                int vmPesValue = 4;
-                int noofhost = 2;
-                int vmno = 4;
-                int cloudletno = 8;
-                int hostcores = 8;
-                int cloudletCore = 2;
-                int ramDefault = 512;
-                int bwDefault =  1000;
-                int storageDefault = 10000;
-                int cloudletLength = 50000;
-                // Parse the user input as an integer if provided
-                if (vmcpuCoresValue != 0) {
-                    vmPesValue = vmcpuCoresValue;
-                }
-                if (ionohosts != 0) {
-                    noofhost = ionohosts;
-                }
-                if (vmNoIO != 0) {
-                    vmno = vmNoIO;
-                }
-                if (cloudlets != 0) {
-                    cloudletno = cloudlets;
-                }
-                if (host_cpu != 0) {
-                    hostcores = host_cpu;
-                }
-                if (cloudlets_core != 0) {
-                    cloudletCore = cloudlets_core;
-                }
-                if (vmram != 0) {
-                    ramDefault = vmram;
-                }
-                if (vmbw != 0){
-                    bwDefault = vmbw;
-                }
-                if (vmstor != 0){
-                    storageDefault=vmstor;
-                }
-                if (cloudletlen != 0){
-                    cloudletLength=cloudletlen;
-                }
-                // Parse the user input as an integer
 
 
 
+                    // Call the setVmPes method in the EnerymonitoringApplication class
+                    errorLabel.setText(""); // Clear any previous error message
+                    EnerymonitoringApplication.setVmPes(vmPesValue);
+                    EnerymonitoringApplication.setHosts(noofhost);
+                    EnerymonitoringApplication.setVms(vmno);
+                    EnerymonitoringApplication.setCloudletno(cloudletno);
+                    EnerymonitoringApplication.setHostcores(hostcores);
+                    EnerymonitoringApplication.setCLOUDLETS_core(cloudletCore);
+                    EnerymonitoringApplication.setVM_RAM_DEFAULT(ramDefault);
+                    EnerymonitoringApplication.setVM_BW_DEFAULT(bwDefault);
+                    EnerymonitoringApplication.setVM_STORAGE_DEFAULT(storageDefault);
+                    EnerymonitoringApplication.setCLOUDLET_LENGTH(cloudletLength);
 
 
-                // Call the setVmPes method in the EnerymonitoringApplication class
-                EnerymonitoringApplication.setVmPes(vmPesValue);
-                EnerymonitoringApplication.setHosts(noofhost);
-                EnerymonitoringApplication.setVms(vmno);
-                EnerymonitoringApplication.setCloudletno(cloudletno);
-                EnerymonitoringApplication.setHostcores(hostcores);
-                EnerymonitoringApplication.setCLOUDLETS_core(cloudletCore);
-                EnerymonitoringApplication.setVM_RAM_DEFAULT(ramDefault);
-                EnerymonitoringApplication.setVM_BW_DEFAULT(bwDefault);
-                EnerymonitoringApplication.setVM_STORAGE_DEFAULT(storageDefault);
-                EnerymonitoringApplication.setCLOUDLET_LENGTH(cloudletLength);
+                    // Instantiate and start the EnerymonitoringApplication
+                    energyMonitoringApp = new EnerymonitoringApplication();
+                    // Assuming you have a method to start the energy monitoring
 
+                    double averageHostConsumption = energyMonitoringApp.getAverageHostEnergyConsumption();
+                    energyGauge.updateValue(averageHostConsumption);
 
-                // Instantiate and start the EnerymonitoringApplication
-                energyMonitoringApp = new EnerymonitoringApplication();
-                // Assuming you have a method to start the energy monitoring
-
-                double averageHostConsumption = energyMonitoringApp.getAverageHostEnergyConsumption();
-                energyGauge.updateValue(averageHostConsumption);
-
-                double averageVMConsumption = energyMonitoringApp.getAverageVMEnergyConsumption();
-                vmenergyGauge.updateValue(averageVMConsumption);
+                    double averageVMConsumption = energyMonitoringApp.getAverageVMEnergyConsumption();
+                    vmenergyGauge.updateValue(averageVMConsumption);
 
 
 
@@ -361,15 +428,20 @@ public class Graphical_User_Interface extends Application {
                 System.out.println("Updated VM Gauge Value: " + energyGauge.getVMGauge().getValue());*/
 
 
-                // Update the circular meter with the average energy consumption values
+                    // Update the circular meter with the average energy consumption values
 
-                // Display the output in a new window or dialog
-                displayOutputInTextArea(energyMonitoringApp.getOutput());
-            } catch (NumberFormatException ex) {
-                // Handle the case where the input is not a valid integer
-                System.err.println("Invalid input. Please enter a valid integer.");
-                // You can display an error message to the user as needed
+                    // Display the output in a new window or dialog
+                    displayOutputInTextArea(energyMonitoringApp.getOutput());
+                } catch (NumberFormatException ex) {
+                    // Handle the case where the input is not a valid integer
+                    System.err.println("Invalid input. Please enter a valid integer.");
+                    // You can display an error message to the user as needed
+                }
             }
+
+
+
+
         });
         moreButton.setOnAction(e -> {
             showAboutUsPage();
@@ -438,6 +510,38 @@ public class Graphical_User_Interface extends Application {
         aboutUsStage.setScene(aboutUsScene);
         aboutUsStage.show();
     }
-}
+    class ConfigurationManager {
+        private final Map<String, Configuration> configurations = new HashMap<>();
+
+        public void addConfiguration(String name, int vmCores, int hostNo, int vmNo, int cloudletNo, int hostCores, int cloudletCores) {
+            configurations.put(name, new Configuration(vmCores, hostNo, vmNo, cloudletNo, hostCores, cloudletCores));
+        }
+
+        public Set<String> getConfigurationNames() {
+            return configurations.keySet();
+        }
+
+        public Configuration getConfiguration(String name) {
+            return configurations.get(name);
+        }
+    }
+            class Configuration {
+                int vmCores;
+                int noOfHosts;
+                int noOfVMs;
+                int noOfCloudlets;
+                int hostCores;
+                int cloudletCores;
+
+                public Configuration(int vmCores, int noOfHosts, int noOfVMs, int noOfCloudlets, int hostCores, int cloudletCores) {
+                    this.vmCores = vmCores;
+                    this.noOfHosts = noOfHosts;
+                    this.noOfVMs = noOfVMs;
+                    this.noOfCloudlets = noOfCloudlets;
+                    this.hostCores = hostCores;
+                    this.cloudletCores = cloudletCores;
+                }
+            }
+        }
 
 
