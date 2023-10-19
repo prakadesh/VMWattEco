@@ -65,6 +65,9 @@ public class EnerymonitoringApplication {
 
 	private static int VM_PES_DEFAULT = 4;
 
+	//private static int[] vmPesConfigurations = {3, 3}; // Configurations for each VM
+
+
 	private static int VM_RAM_DEFAULT = 512;
 
 	private static int VM_BW_DEFAULT= 1000;
@@ -334,8 +337,8 @@ public class EnerymonitoringApplication {
 
 			final var list = new ArrayList<Vm>(VMS);
 			for (int i = 0; i < VMS ; i++) {
-
-					final var vm = new VmSimple(i, 1000, VM_PES_DEFAULT);
+				//final int vmPes = (i < vmPesConfigurations.length) ? vmPesConfigurations[i] : VM_PES_DEFAULT;
+				final var vm = new VmSimple(i, 1000, VM_PES_DEFAULT);
 					vm.setRam(VM_RAM_DEFAULT).setBw(VM_BW_DEFAULT).setSize(VM_STORAGE_DEFAULT).enableUtilizationStats();
 					list.add(vm);
 

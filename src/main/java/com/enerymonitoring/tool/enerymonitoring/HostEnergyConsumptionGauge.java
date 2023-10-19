@@ -14,8 +14,8 @@ public class HostEnergyConsumptionGauge {
         gauge = new Gauge();
         gauge.setSkin(new ModernSkin(gauge));
         gauge.setMinValue(0);
-        gauge.setMaxValue(1000);
-        gauge.setMajorTickSpace(100); // Set the interval to 100
+        gauge.setMaxValue(10000);
+        gauge.setMajorTickSpace(1000); // Set the interval to 100
 
         gauge.setUnit("Joules");
 
