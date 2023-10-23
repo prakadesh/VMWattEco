@@ -28,6 +28,10 @@ import java.util.Set;
     private Slider host_no_slider;
     private Slider host_cores;
     private Slider vm_no_slider;
+
+    private Slider host_bw_slider;
+
+    private Slider host_storage_slider;
     private Slider cloudlet_no_slider;
     private Slider cloudlet_core;
     private String darkModeStyles;
@@ -35,10 +39,11 @@ import java.util.Set;
     private Slider vmBwSlider;
     private Slider vmStorageSlider;
     private Slider cloudletLengthSlider;
-            private final int hostDefaultRAM = 2048;
+
+            private Slider host_ram_slider;
 
 
-                public static void main(String[] args) {
+            public static void main(String[] args) {
                     launch(args);
                 }
 
@@ -57,20 +62,27 @@ import java.util.Set;
         ConfigurationManager configManager = new ConfigurationManager();
 
         // Add multiple configurations to the manager
-        configManager.addConfiguration("Default", 4, 2, 4, 8, 8, 2);
-        configManager.addConfiguration("Custom 1", 8, 3, 5, 10, 12, 3);
-        configManager.addConfiguration("Configuration 1", 5, 4, 10, 2, 20, 1);
-        configManager.addConfiguration("Configuration 2", 3, 6, 9, 3, 15, 2);
-        configManager.addConfiguration("Configuration 3", 2, 8, 8, 4, 12, 4);
-        configManager.addConfiguration("Configuration 4", 4, 2, 6, 2, 10, 2);
-        configManager.addConfiguration("Configuration 5", 3, 6, 12, 2, 15, 1);
-        configManager.addConfiguration("Configuration 6", 6, 3, 9, 3, 18, 2);
-        configManager.addConfiguration("Configuration 7", 4, 4, 8, 2, 12, 2);
-        configManager.addConfiguration("Configuration 8", 5, 5, 10, 2, 15, 2);
-        configManager.addConfiguration("Configuration 9", 3, 6, 6, 2, 12, 2);
-        configManager.addConfiguration("Configuration 10", 5, 3, 10, 2, 15, 2);
+        configManager.addConfiguration("Default", 4, 2, 4, 8, 8, 2, 512, 1000, 10000, 50000, 2048, 1000000, 10000);
+        configManager.addConfiguration("Pass Config 1", 4, 2, 2, 2, 8, 4, 256, 200, 2000, 10000, 8192, 4000, 5000);
+        configManager.addConfiguration("Pass Config 2", 3, 3, 3, 3, 9, 3, 768, 300, 3000, 15000, 12288, 6000, 7500);
+        configManager.addConfiguration("Pass Config 3", 2, 4, 4, 4, 8, 4, 512, 400, 4000, 20000, 16384, 8000, 10000);
+        configManager.addConfiguration("Pass Config 4", 4, 2, 2, 2, 8, 4, 512, 200, 2000, 10000, 8192, 4000, 5000);
+        configManager.addConfiguration("Pass Config 5", 3, 3, 3, 3, 9, 3, 768, 300, 3000, 15000, 12288, 6000, 7500);
+        configManager.addConfiguration("Pass Config 6", 2, 4, 4, 4, 8, 4, 512, 400, 4000, 20000, 16384, 10000, 10000);
+        configManager.addConfiguration("Pass Config 7", 4, 2, 2, 2, 8, 4, 512, 200, 2000, 10000, 8192, 4000, 5000);
+        configManager.addConfiguration("Pass Config 8", 3, 3, 3, 3, 9, 3, 768, 300, 3000, 15000, 12288, 6000, 7500);
 
-        // Create a ComboBox to select configurations
+
+        // Create configurations that trigger the conditions
+        configManager.addConfiguration("Trigger Config 1", 8, 3, 5, 10, 12, 3, 1024, 1500, 12000, 60000, 4096, 2000, 10000);
+        configManager.addConfiguration("Trigger Config 2", 5, 4, 10, 2, 20, 1, 256, 800, 8000, 30000, 8192, 800, 4000);
+        configManager.addConfiguration("Trigger Config 3", 3, 6, 9, 3, 15, 2, 768, 1200, 9000, 40000, 16384, 1200, 6000);
+        configManager.addConfiguration("Trigger Config 4", 8, 3, 5, 10, 12, 3, 1024, 1500, 12000, 60000, 4096, 2000, 10000);
+        configManager.addConfiguration("Trigger Config 5", 5, 4, 10, 2, 20, 1, 256, 800, 8000, 30000, 8192, 800, 4000);
+        configManager.addConfiguration("Trigger Config 6", 3, 6, 9, 3, 15, 2, 768, 1200, 9000, 40000, 16384, 1200, 6000);
+        configManager.addConfiguration("Trigger Config 7", 2, 8, 8, 4, 12, 4, 1024, 1500, 8000, 45000, 8192, 1000, 5000);
+        configManager.addConfiguration("Trigger Config 8", 4, 2, 6, 2, 10, 2, 512, 800, 12000, 30000, 4096, 500, 2500);
+
         ObservableList<String> configNames = FXCollections.observableArrayList(configManager.getConfigurationNames());
 
         ComboBox<String> configComboBox = new ComboBox<>(configNames);
@@ -84,6 +96,16 @@ import java.util.Set;
             vm_no_slider.setValue(selectedConfig.noOfVMs);
             cloudlet_no_slider.setValue(selectedConfig.noOfCloudlets);
             cloudlet_core.setValue(selectedConfig.cloudletCores);
+            host_ram_slider.setValue(selectedConfig.hostRam);
+            host_storage_slider.setValue(selectedConfig.hoststorage);
+            host_bw_slider.setValue(selectedConfig.hostbw);
+            vmRamSlider.setValue(selectedConfig.vmRam);
+            vmBwSlider.setValue(selectedConfig.vmBw);
+            vmStorageSlider.setValue(selectedConfig.vmStorage);
+            cloudletLengthSlider.setValue(selectedConfig.cloudletLength);
+
+
+            //add more
         });
         VBox configComboBoxBox = new VBox(10);
         configComboBoxBox.getChildren().addAll(new Label("Select Configuration"), configComboBox);
@@ -121,6 +143,9 @@ import java.util.Set;
         host_no_slider = new Slider(0, 10, 0);
         Label hostnoValueLabel = new Label("NO OF HOSTS: 0");
 
+        host_ram_slider = new Slider(0, 8192, 0);
+        Label hostramValueLabel = new Label("Host RAM (MB): 0");
+
         host_cores = new Slider(0, 10, 0);
         Label hostcoreValueLabel = new Label("Host CPU Cores : 0");
 
@@ -149,12 +174,23 @@ import java.util.Set;
          cloudletLengthSlider = new Slider(0, 100000, 0); // Min: 0, Max: 100000, Initial: 50000
         Label cloudletLengthValueLabel = new Label("Cloudlet Length: 0");
 
+        host_bw_slider = new Slider(0, 2000, 0);
+        Label host_bw_valuelabel = new Label("HOST Bandwidth (Mbps): 0");
+
+        host_storage_slider = new Slider(0, 20000, 0);
+        Label hostStorageValueLabel = new Label("HOST Storage (MB): 0");
+
+
 
 
         // Add a listener to update the label when the Slider value changes
         vmCoresSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             int selectedValue = newValue.intValue();
             vmCoresValueLabel.setText("VM CPU Cores: " + selectedValue);
+        });
+        host_ram_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            int selectedValue = newValue.intValue();
+            hostramValueLabel.setText("Host RAM (MB): " + selectedValue);
         });
 
         host_no_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -165,6 +201,7 @@ import java.util.Set;
             int selectedValue = newValue.intValue();
             hostcoreValueLabel.setText("Host CPU Cores: " + selectedValue);
         });
+
         vm_no_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             int selectedValue = newValue.intValue();
             vmnoValueLabel.setText("NO OF VM: " + selectedValue);
@@ -197,6 +234,14 @@ import java.util.Set;
             int selectedValue = newValue.intValue();
             cloudletLengthValueLabel.setText("Cloudlet Length: " + selectedValue);
         });
+        host_bw_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            int selectedValue = newValue.intValue();
+            host_bw_valuelabel.setText("HOST Bandwidth (Mbps): " + selectedValue);
+        });
+        host_storage_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            int selectedValue = newValue.intValue();
+            hostStorageValueLabel.setText("HOST Storage (MB): " + selectedValue);
+        });
 
 
         // Initialize the energy gauge
@@ -223,6 +268,8 @@ import java.util.Set;
         VBox.setMargin(vmCoresSlider, new Insets(0, 170, 0, 10));
         VBox.setMargin(host_no_slider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(hostnoValueLabel, new Insets(10, 10, 0, 10));// Set top and bottom margins to 10 pixels
+        VBox.setMargin(host_ram_slider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
+        VBox.setMargin(hostramValueLabel, new Insets(10, 10, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(host_cores, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(hostcoreValueLabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(vm_no_slider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
@@ -236,6 +283,10 @@ import java.util.Set;
         VBox.setMargin(vmRamValueLabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(vmBwSlider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(vmBwValueLabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
+        VBox.setMargin(host_bw_slider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
+        VBox.setMargin(host_bw_valuelabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
+        VBox.setMargin(host_storage_slider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
+        VBox.setMargin(hostStorageValueLabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(vmStorageSlider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(vmStorageValueLabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(cloudletLengthSlider, new Insets(0, 170, 0, 10));// Set top and bottom margins to 10 pixels
@@ -246,12 +297,15 @@ import java.util.Set;
         errorLabel.setStyle(darkModeStyles);
         hostnoValueLabel.setStyle(darkModeStyles);
         hostcoreValueLabel.setStyle(darkModeStyles);
+        hostramValueLabel.setStyle(darkModeStyles);
         vmnoValueLabel.setStyle(darkModeStyles);
         vmCoresValueLabel.setStyle(darkModeStyles);
         cloudletnoValueLabel.setStyle(darkModeStyles);
         cloudletcoreValueLabel.setStyle(darkModeStyles);
         aboutUsLabel.setStyle(darkModeStyles);
         vmRamValueLabel.setStyle(darkModeStyles);
+        hostStorageValueLabel.setStyle(darkModeStyles);
+        host_bw_valuelabel.setStyle(darkModeStyles);
         vmBwValueLabel.setStyle(darkModeStyles);
         vmStorageValueLabel.setStyle(darkModeStyles);
         cloudletLengthValueLabel.setStyle(darkModeStyles);
@@ -260,7 +314,7 @@ import java.util.Set;
 
         vbox_final.getChildren().addAll(
                 configComboBoxBox,
-                hostnoValueLabel, host_no_slider, hostcoreValueLabel, host_cores,
+                hostnoValueLabel, host_no_slider, hostcoreValueLabel, host_cores,hostramValueLabel,host_ram_slider,hostStorageValueLabel,host_storage_slider,host_bw_valuelabel,host_bw_slider,
                 vmnoValueLabel, vm_no_slider, vmCoresValueLabel, vmCoresSlider,
                 cloudletnoValueLabel, cloudlet_no_slider, cloudletcoreValueLabel, cloudlet_core, vmRamValueLabel,
                 vmRamSlider,
@@ -314,6 +368,7 @@ import java.util.Set;
         startButton.setOnAction(e -> {
             int vmcpuCoresValue = (int) vmCoresSlider.getValue();
             int ionohosts = (int) host_no_slider.getValue();
+            int iohostram = (int) host_ram_slider.getValue();
             int vmNoIO = (int) vm_no_slider.getValue();
             int cloudlets = (int) cloudlet_no_slider.getValue();
             int host_cpu = (int) host_cores.getValue();
@@ -322,26 +377,52 @@ import java.util.Set;
             int vmbw = (int) vmBwSlider.getValue();
             int vmstor = (int) vmStorageSlider.getValue();
             int cloudletlen = (int) cloudletLengthSlider.getValue();
+            int HOST_bw = (int) host_bw_slider.getValue();
+            int HOST_storage =(int) host_storage_slider.getValue();
 
             // Calculate total available host resources (you need to define these)
             int totalHostCores = ionohosts * host_cpu;
-            int totalRAM = hostDefaultRAM;
+            int totalRAM = ionohosts * iohostram;
+            int totalBW = ionohosts * HOST_bw;
+            int totalStorage = ionohosts * HOST_storage;
 
-            int totalHostRAM = ionohosts * totalRAM; // Total available RAM in all hosts'
+            String errorMessage = null; // Initialize error message as null
 
-            if (vmcpuCoresValue > host_cpu || vmram > (totalHostRAM / vmNoIO)) {
-                errorLabel.setText("Host resources cannot handle the VM requirements.");
-            } else if (cloudlets_core > host_cpu) {
-                errorLabel.setText("Host resources cannot handle the cloudlet requirements.");
-            } else if (totalHostCores < vmcpuCoresValue * vmNoIO) {
-                errorLabel.setText("Not enough host resources for VMs.");
-            } else if (totalHostCores < cloudlets_core * cloudlets) {
-                errorLabel.setText("Not enough host resources for cloudlets.");
-            }else {
-                try {
+
+
+
+                    if (vmcpuCoresValue > host_cpu || vmram > (totalRAM / vmNoIO)) {
+                        errorMessage = "Host resources cannot handle the VM requirements.";
+                    }
+                    if (cloudlets_core > host_cpu) {
+                        errorMessage = "Host resources cannot handle the cloudlet requirements.";
+                    }
+                    if (totalHostCores < vmcpuCoresValue * vmNoIO) {
+                        errorMessage = "Not enough host CPU cores for VMs.";
+                    }
+                    if (totalHostCores <  vmcpuCoresValue * vmNoIO) {
+                        errorMessage = "Combined CPU core requirements exceed host capacity.";
+                    }
+                    if (totalRAM < vmram * vmNoIO) {
+                        errorMessage = "Combined RAM requirements exceed host capacity.";
+                    }
+                    if (totalBW < vmbw * vmNoIO) {
+                        errorMessage = "Combined bandwidth requirements exceed host capacity.";
+                    }
+                    if (totalStorage < vmstor * vmNoIO) {
+                        errorMessage = "Combined storage requirements exceed host capacity.";
+                    }
+
+                    if (errorMessage != null) {
+                        errorLabel.setText(errorMessage);
+                    } else {
+
+
+            try {
                     scrollPane.setVvalue(1.0);
 
                     // Initialize variables with default values
+
                     int vmPesValue = 4;
                     int noofhost = 2;
                     int vmno = 4;
@@ -352,12 +433,18 @@ import java.util.Set;
                     int bwDefault =  1000;
                     int storageDefault = 10000;
                     int cloudletLength = 50000;
+                    int hostRAM = 2048;
+                    int host_bw = 10000;
+                    int host_storage = 1000000;
                     // Parse the user input as an integer if provided
                     if (vmcpuCoresValue != 0) {
                         vmPesValue = vmcpuCoresValue;
                     }
                     if (ionohosts != 0) {
                         noofhost = ionohosts;
+                    }
+                    if (iohostram != 0){
+                        hostRAM = iohostram;
                     }
                     if (vmNoIO != 0) {
                         vmno = vmNoIO;
@@ -383,6 +470,12 @@ import java.util.Set;
                     if (cloudletlen != 0){
                         cloudletLength=cloudletlen;
                     }
+                    if (HOST_bw != 0){
+                        host_bw = HOST_bw;
+                    }
+                    if (HOST_storage != 0){
+                        host_storage = HOST_storage;
+                    }
                     // Parse the user input as an integer
 
 
@@ -400,7 +493,10 @@ import java.util.Set;
                     EnerymonitoringApplication.setVM_RAM_DEFAULT(ramDefault);
                     EnerymonitoringApplication.setVM_BW_DEFAULT(bwDefault);
                     EnerymonitoringApplication.setVM_STORAGE_DEFAULT(storageDefault);
+                    EnerymonitoringApplication.setHOST_RAM(hostRAM);
                     EnerymonitoringApplication.setCLOUDLET_LENGTH(cloudletLength);
+                    EnerymonitoringApplication.setHOST_BW(host_bw);
+                    EnerymonitoringApplication.setHOST_Storage(host_storage);
 
 
                     // Instantiate and start the EnerymonitoringApplication
@@ -511,9 +607,12 @@ import java.util.Set;
     class ConfigurationManager {
         private final Map<String, Configuration> configurations = new HashMap<>();
 
-        public void addConfiguration(String name, int vmCores, int hostNo, int vmNo, int cloudletNo, int hostCores, int cloudletCores) {
-            configurations.put(name, new Configuration(vmCores, hostNo, vmNo, cloudletNo, hostCores, cloudletCores));
-        }
+            public void addConfiguration(String name, int vmCores, int noOfHosts, int vmNo, int cloudletNo,
+                                         int hostCores, int cloudletCores, int vmRam, int vmBw, int vmStorage,
+                                         int cloudletLength, int hostRam, int hoststorage, int hostbw  ) {
+                configurations.put(name, new Configuration(vmCores, noOfHosts, vmNo, cloudletNo,
+                        hostCores, cloudletCores, vmRam, vmBw, vmStorage, cloudletLength, hostRam,hoststorage,hostbw));
+            }
 
         public Set<String> getConfigurationNames() {
             return configurations.keySet();
@@ -530,14 +629,31 @@ import java.util.Set;
                 int noOfCloudlets;
                 int hostCores;
                 int cloudletCores;
+                int vmRam;
+                int vmBw;
+                int vmStorage;
+                int cloudletLength;
+                int hostRam;
+                int hoststorage;
+                int hostbw;
 
-                public Configuration(int vmCores, int noOfHosts, int noOfVMs, int noOfCloudlets, int hostCores, int cloudletCores) {
+
+                public Configuration(int vmCores, int noOfHosts, int noOfVMs, int noOfCloudlets, int hostCores, int cloudletCores,
+                                     int vmRam, int vmBw, int vmStorage, int cloudletLength, int hostRam, int hoststorage, int hostbw ) {
                     this.vmCores = vmCores;
                     this.noOfHosts = noOfHosts;
                     this.noOfVMs = noOfVMs;
                     this.noOfCloudlets = noOfCloudlets;
                     this.hostCores = hostCores;
                     this.cloudletCores = cloudletCores;
+                    this.vmRam = vmRam;
+                    this.vmBw = vmBw;
+                    this.vmStorage = vmStorage;
+                    this.cloudletLength = cloudletLength;
+                    this.hostRam = hostRam;
+                    this.hostbw = hostbw;
+                    this.hoststorage = hoststorage;
+
                 }
             }
         }

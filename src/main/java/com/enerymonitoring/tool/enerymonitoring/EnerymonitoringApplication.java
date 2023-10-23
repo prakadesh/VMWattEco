@@ -37,11 +37,11 @@ public class EnerymonitoringApplication {
 	/** PES  stands for Processing Element.*/
 	private static int HOST_PES = 8;
 
-	private static final int HOST2_PES= 4;
+	private static final int HOST2_PES= 4; //second host config
 
-	private final long HOST_RAM = 2048; //in Megabytes
-	private final long HOST_BW = 10000; //bandwidth in Megabits/s
-	private final long HOST_Storage = 1000000; //in Megabytes
+	private static long HOST_RAM = 2048; //in Megabytes
+	private static long HOST_BW = 10000; //bandwidth in Megabits/s
+	private static long HOST_Storage = 1000000; //in Megabytes
 
 	/**   time (in seconds) the Host takes to start up. */
 	private static final double HOST_START_UP_DELAY = 5;
@@ -59,7 +59,7 @@ public class EnerymonitoringApplication {
 
 	/** HERE WE CAN SPECIFY WHICH VM TO USE THE CUSTOM CONFIG USING VMS_CUSTOM_CONFIG **/
 
-	private static final int VMS_CUSTOM1_CONFIG = 2;
+	private static final int VMS_CUSTOM1_CONFIG = 2; //secondary VM config
 
 
 
@@ -74,20 +74,20 @@ public class EnerymonitoringApplication {
 
 	private static int VM_STORAGE_DEFAULT = 10000;
 
-	private static final  int VM_PES_CUSTOM1 = 2;
+	private static final  int VM_PES_CUSTOM1 = 2;//secondary VM config
 
-	private static final int VM_RAM_CUSTOM1 = 712;
+	private static final int VM_RAM_CUSTOM1 = 712;//secondary VM config
 
-	private static final int VM_BW_CUSTOM1 = 2000;
+	private static final int VM_BW_CUSTOM1 = 2000;//secondary VM config
 
-	private static final int VM_STORAGE_CUSTOM1 = 9000;
+	private static final int VM_STORAGE_CUSTOM1 = 9000;//secondary VM config
 
 
 	/**  Cloudlet  represents an application running inside a Vm */
 	private static int CLOUDLETS = 8;
 	private static int CLOUDLET_PES = 2;
 
-	private static final int CLOUDLET2_PES = 4;
+	private static final int CLOUDLET2_PES = 4;//secondary VM config
 	private static int CLOUDLET_LENGTH = 50000;
 
 	private static final int CLOUDLET2LENGTH= 40000;
@@ -405,6 +405,18 @@ public class EnerymonitoringApplication {
 
 	public static void setCLOUDLET_LENGTH(int cloudletLength) {
 		CLOUDLET_LENGTH = cloudletLength;
+	}
+
+	public static void setHOST_RAM(int hosts_ram){
+		HOST_RAM = hosts_ram;
+
+	}
+
+	public static void setHOST_BW(int host_bw){
+		HOST_BW = host_bw;
+	}
+	public 	static void setHOST_Storage(int host_storage){
+		HOST_Storage = host_storage;
 	}
 
     public String getOutput() {
