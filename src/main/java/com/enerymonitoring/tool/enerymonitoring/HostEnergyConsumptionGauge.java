@@ -31,52 +31,5 @@ public class HostEnergyConsumptionGauge {
         gauge.setValue(value);
     }
 
-    /** / Initialize the gauges
-    private void initGraphics() {
-        // Create and configure gaugeHost
-        gaugeHost = GaugeBuilder.create()
-                .skinType(Gauge.SkinType.MODERN)
-                .minValue(100)
-                .maxValue(10000)
-                .foregroundBaseColor(Color.WHITE)
-                .valueVisible(true)
-                .title("Energy Consumption of HOST")
-                .unit("Watts")
-                .build();
-        gaugeHost.setValue(50);
 
-        // Create and configure gaugeVM
-        gaugeVM = GaugeBuilder.create()
-                .skinType(Gauge.SkinType.MODERN)
-                .minValue(0)
-                .maxValue(100)
-                .foregroundBaseColor(Color.WHITE)
-                .valueVisible(true)
-                .title("Energy Consumption of VM")
-                .unit("Watts")
-                .build();
-        gaugeVM.setValue(75);
-    }
-
-    // Create a method to update the gauge's value
-    public Gauge getHostGauge() {
-        return gaugeHost;
-    }
-
-    public Gauge getVMGauge() {
-        return gaugeVM;
-    }
-
-    public void updateValueHost(double value) {
-        gaugeHost.setValue(value);
-        gaugeHost.requestLayout();
-
-    }
-    public void updateValueVM(double value) {
-        gaugeVM.setValue(value);
-        gaugeVM.requestLayout();// Request layout update
-
-
-    }
-     */
 }

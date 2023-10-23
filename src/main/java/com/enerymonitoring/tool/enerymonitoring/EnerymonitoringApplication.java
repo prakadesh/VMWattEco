@@ -133,10 +133,6 @@ public class EnerymonitoringApplication {
 
 
 	EnerymonitoringApplication() {
-
-
-
-
 		simulation = new CloudSimPlus();
 		hostList = new ArrayList<>(HOSTS);
 		/**  Datacenter represent the different data centers that make up the cloud infrastructure.*/
@@ -153,9 +149,7 @@ public class EnerymonitoringApplication {
         outputBuffer = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(outputBuffer));
-
 		simulation.start();
-
 		System.out.println("------------------------------- SIMULATION FOR SCHEDULING INTERVAL = " + SCHEDULING_INTERVAL+" -------------------------------");
 		System.out.println("SIMULATION OF HOSTS = " + HOSTS + " CLOUDLETS = " + CLOUDLETS + " VM = " + VMS);
 		final var cloudletFinishedList = broker0.getCloudletFinishedList();
@@ -376,10 +370,6 @@ public class EnerymonitoringApplication {
 		return cloudletList;
 	}
 
-	// Getter method to access the VM_PES variable
-	public static int getVmPes() {
-		return VM_PES_DEFAULT;
-	}
 
 	// Setter method to update the VM_PES variable
 	public static void setVmPes(int vmPes) {
@@ -396,11 +386,7 @@ public class EnerymonitoringApplication {
 		CLOUDLETS = cloudletno;
 	}
 
-	public static void setHostcores(int hostcores) {
-		HOST_PES = hostcores;
-
-
-	}
+	public static void setHostcores(int hostcores) {HOST_PES = hostcores;}
 	public static void setCLOUDLETS_core(int cloudletCore){
 		CLOUDLET_PES =  cloudletCore;
 	}

@@ -8,12 +8,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.lang.module.Configuration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +74,7 @@ import java.util.Set;
         ObservableList<String> configNames = FXCollections.observableArrayList(configManager.getConfigurationNames());
 
         ComboBox<String> configComboBox = new ComboBox<>(configNames);
-        configComboBox.setValue("Default");
+        configComboBox.setValue("Select a Configuration");
 
         configComboBox.setOnAction(e -> {
             Configuration selectedConfig = configManager.getConfiguration(configComboBox.getValue());
@@ -212,7 +210,7 @@ import java.util.Set;
 
 
         // Create a layout and add components
-        VBox vbox = new VBox(10);// 10 pixels spacing
+        VBox vbox_final = new VBox(10);// 10 pixels spacing
 
         // Create dark mode styles
         darkModeStyles =
@@ -244,7 +242,7 @@ import java.util.Set;
         VBox.setMargin(cloudletLengthValueLabel, new Insets(0, 10, 0, 10));// Set top and bottom margins to 10 pixels
         VBox.setMargin(startButton, new Insets(10));
         VBox.setMargin(buttonBox, new Insets(10, 10, 0, 10));
-        vbox.setStyle(darkModeStyles); // Set the background color to black
+        vbox_final.setStyle(darkModeStyles); // Set the background color to black
         errorLabel.setStyle(darkModeStyles);
         hostnoValueLabel.setStyle(darkModeStyles);
         hostcoreValueLabel.setStyle(darkModeStyles);
@@ -260,7 +258,7 @@ import java.util.Set;
 
         errorLabel.setStyle("-fx-text-fill: red;"); // Set the error text color to red
 
-        vbox.getChildren().addAll(
+        vbox_final.getChildren().addAll(
                 configComboBoxBox,
                 hostnoValueLabel, host_no_slider, hostcoreValueLabel, host_cores,
                 vmnoValueLabel, vm_no_slider, vmCoresValueLabel, vmCoresSlider,
@@ -275,7 +273,7 @@ import java.util.Set;
                 buttonBox, errorLabel, createOutputTextArea(), hbox_gauge
         );
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(vbox);
+        scrollPane.setContent(vbox_final);
         scrollPane.pannableProperty().set(true);
         scrollPane.setFitToWidth(true);  // This line will make the scroll pane take the full width
         // Get the vertical scrollbar of the scroll pane
