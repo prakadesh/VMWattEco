@@ -550,15 +550,34 @@ import java.util.Set;
 
 
     // Add a method to display the output in a new window or dialog
-    private TextArea createOutputTextArea() {
+    private VBox createOutputTextArea() {
         outputTextArea = new TextArea();
         outputTextArea.setEditable(false);
         outputTextArea.setWrapText(true);
-        outputTextArea.setPrefRowCount(10); // Set the number of visible rows
-        return outputTextArea;
+        outputTextArea.setPrefRowCount(10);// Set the number of visible rows
+        Button openOutputWindowButton = new Button("Open Output Window");
+        openOutputWindowButton.setOnAction(e -> openOutputWindow(outputTextArea));
+        openOutputWindowButton.setVisible(false);
+        openOutputWindowButton.setManaged(false);
+        VBox vbox_outputtextarea = new VBox(10, openOutputWindowButton, outputTextArea);
+        return vbox_outputtextarea;
     }
 
-    // Method to display the output in the TextArea
+            private void openOutputWindow(TextArea outputTextArea) {
+                Stage outputStage = new Stage();
+                outputStage.setTitle("Energy Monitoring Output");
+                TextArea outputInWindow = new TextArea(outputTextArea.getText());
+                outputInWindow.setEditable(false);
+                outputInWindow.setStyle(darkModeStyles);
+                outputInWindow.setWrapText(true);
+
+                Scene outputScene = new Scene(new StackPane(outputInWindow), 800, 600);
+
+                outputStage.setScene(outputScene);
+                outputStage.show();
+            }
+
+            // Method to display the output in the TextArea
     private void displayOutputInTextArea(String output) {
         outputTextArea.appendText("\nEnergy Monitoring Output:\n" + output);
         outputTextArea.positionCaret(outputTextArea.getText().length());
