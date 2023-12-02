@@ -7,10 +7,8 @@ This repository contains the source code for the Energy Monitoring VM applicatio
 
 ## Team Members
 - **Prakadesh R (Reg No: 20MEI10076)**
-- **Aakaash K S (Reg No: 20MEI10055)**
 - **M.Pon Dinesh Kumar (Reg No: 20MEI10010)**
-- **KOTHA SRIRAM (Reg No: 20MEI10062)**
-- **CHINTHA REDDY SAIKIRAN (Reg No: 20MEI10064)**
+
 
 ## Running the Application
 
